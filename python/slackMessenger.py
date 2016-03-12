@@ -1,6 +1,8 @@
 import urllib2, urllib
 import json
 
+from keys import SLACK_URL
+
 ##################################
 # Written by Harrison Beachey 2016
 #
@@ -23,14 +25,12 @@ import json
 # 	"Second Title": "Second Value",
 # }
 #
-# s.addAttatchment("YouAttach", entries=entries)
-# s.addAttatchment("MeAttach", COLOR_BLUE, "Outside the block", "Inisde the block", entries)
+# s.addColorBlock("YouAttach", entries=entries)
+# s.addColorBlock("MeAttach", COLOR_BLUE, "Outside the block", "Inisde the block", entries)
 #
 # s.send("I want to say something before the rest of this message here")
 #
 ##################################
-
-SLACK_URL = "https://hooks.slack.com/services/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"
 
 COLOR_GREEN="#36a64f"
 COLOR_RED="#ff5151"
@@ -54,7 +54,7 @@ class SlackMessanger(object):
 		self.attachments = []
 		self.debug       = False
 
-	def addAttatchment(self, summery, color=None, outsideBlock=None, insideBlock=None, entries={}):
+	def addColorBlock(self, summery, color=None, outsideBlock=None, insideBlock=None, entries={}):
 		newAttatch = {
 				"fallback": summery,
 				"pretext": outsideBlock or summery,
