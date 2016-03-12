@@ -10,7 +10,7 @@ from keys import SLACK_URL
 # The bot can change it's username/icon to suit its current use
 #
 # == !! Note !!
-# After a sucessful send() call, all attachments are cleared!
+# After a sucessful send() call, all blocks are cleared!
 #
 # ==== Basic Message =======
 #
@@ -51,11 +51,11 @@ class SlackMessenger(object):
 		self.channel     = channel
 		self.username    = username
 		self.icon        = icon
-		self.attachments = []
+		self.blocks      = []
 		self.debug       = False
 
 	def addColorBlock(self, summery, color=None, outsideBlock=None, insideBlock=None, entries={}):
-		newAttatch = {
+		newBlock = {
 				"fallback": summery,
 				"pretext": outsideBlock or summery,
 				"text": insideBlock,
@@ -63,14 +63,14 @@ class SlackMessenger(object):
 				"fields": [{"title": k, "value": v} for k,v in entries.iteritems()]
 			}
 
-		self.attachments.append(newAttatch)
+		self.blocks.append(newBlock)
 
 	def send(self, summery=None):
 		data = {
 			"channel": self.channel,
 			"username": self.username,
 			"text": summery,
-			"attachments": self.attachments
+			"attachments": self.blocks
 		}
 
 		if self.icon:
@@ -93,7 +93,7 @@ class SlackMessenger(object):
 				channel = self.channel or "#automation"
 				username = self.username or "ScriptKitty"
 				print 'Sent message to slack channel %s as user %s' % (channel, username)	
-				self.attachments = []
+				self.blocks = []
 		except Exception, e:
 			print "Error sending message to slack!"
 			print e
