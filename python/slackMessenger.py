@@ -19,7 +19,7 @@ from keys import SLACK_URL
 #
 # ==== Full usage =======
 #
-# s = SlackMessanger("#random", "TrollBot", ":troll:")
+# s = SlackMessenger("#random", "TrollBot", ":troll:")
 # entries = {
 # 	"This is a title": "This is a value",
 # 	"Second Title": "Second Value",
@@ -45,7 +45,7 @@ def blockFormat(text):
 def linkFormat(text, link):
 	return "<" + link + "|" + text + ">"
 
-class SlackMessanger(object):
+class SlackMessenger(object):
 	def __init__(self, channel=None, username=None, icon=None):
 		self.hookUrl     = SLACK_URL
 		self.channel     = channel
