@@ -1,6 +1,7 @@
 import urllib2, urllib
 import json
 
+# SLACK_URL is the url slack gives for the bot you create
 from keys import SLACK_URL
 
 ##################################
@@ -19,10 +20,10 @@ from keys import SLACK_URL
 #
 # ==== Full usage =======
 #
-# s = SlackMessenger("#random", "TrollBot", ":troll:")
+# s = SlackMessenger("#build", "BuildBot", ":confetti_ball:")
 # entries = {
-# 	"This is a title": "This is a value",
-# 	"Second Title": "Second Value",
+# 	"Build 123": "Finished",
+# 	"Build 456": "Running",
 # }
 #
 # s.addColorBlock("YouAttach", entries=entries)
@@ -36,14 +37,18 @@ COLOR_GREEN="#36a64f"
 COLOR_RED="#ff5151"
 COLOR_BLUE="#444fd7"
 
+def SLACK_DEBUG(data):
+	#print data
+	pass
+
 def inlineFormat(text):
-		return "`" + text + "`"
+	return "`%s`" % text
 
 def blockFormat(text):
-	return "```" + text + "```"
+	return "```%s```" % text
 
-def linkFormat(text, link):
-	return "<" + link + "|" + text + ">"
+def linkFormat(link, text):
+	return "<%s|%s>" % (link, text)
 
 class SlackMessenger(object):
 	def __init__(self, channel=None, username=None, icon=None):
@@ -52,7 +57,6 @@ class SlackMessenger(object):
 		self.username    = username
 		self.icon        = icon
 		self.blocks      = []
-		self.debug       = False
 
 	def addColorBlock(self, summery, color=None, outsideBlock=None, insideBlock=None, entries={}):
 		newBlock = {
@@ -74,15 +78,14 @@ class SlackMessenger(object):
 		}
 
 		if self.icon:
-			if self.icon[0] == ':':
+			if self.icon.startswith(':') and self.icon.endswith(':'):
 				data["icon_emoji"] = self.icon
 			else:
 				data["icon_url"] = self.icon
 
 		sendData = json.dumps(data)
 
-		if self.debug:
-			print sendData
+		SLACK_DEBUG(sendData)
 
 		try:
 			req = urllib2.Request(self.hookUrl, sendData)
@@ -97,3 +100,29 @@ class SlackMessenger(object):
 		except Exception, e:
 			print "Error sending message to slack!"
 			print e
+
+
+# A small test to make sure everything works
+if __name__ == "__main__":
+	s = SlackMessenger("#automation", "ErrorTester", ":exclamation:")
+	
+	# Max args
+	entries = {
+		"This is a title": "This is a value",
+		"Second Title": "Second Value",
+	}
+
+	s.addColorBlock("YouAttach", entries=entries)
+	s.addColorBlock("MeAttach", COLOR_BLUE, "Outside the block", linkFormat("http://imgur.com", "Inisde the block"), entries)
+	s.send(blockFormat("All functionality") + "\n" + inlineFormat("inline"))
+
+	# Some args missing
+	errors = {
+		"404": "Thing was not found!"
+	}
+
+	s.addColorBlock("Error!", COLOR_RED, entries=errors)
+	s.send()
+
+	# Minimal args
+	s.send("Just a normal message")
